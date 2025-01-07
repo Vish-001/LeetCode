@@ -2,28 +2,31 @@ class Solution {
 public:
     int findPairs(vector<int>& nums, int k) 
     {
-        if (k < 0) return 0;  
+        if (k < 0) return 0; // No valid pairs if k is negative
 
-        unordered_multiset<int> mst(nums.begin(), nums.end());
-        set<pair<int, int>> st;  // Use `set` to avoid duplicate pairs
+        unordered_map<int, int> freq;
+        int ans = 0;
 
-        for (int num : nums) 
-        {
-            mst.erase(mst.find(num));  // Temporarily remove the current number
-
-            // Check for `num + k`
-            if (mst.find(num + k) != mst.end()) {
-                st.insert({num, num + k});  // Insert pair
-            }
-
-            // Check for `num - k`
-            if (mst.find(num - k) != mst.end()) {
-                st.insert({num - k, num});  // Insert pair
-            }
-
-            mst.insert(num);  // Reinsert the current number
+        // Count the frequency of each number
+        for (int num : nums) {
+            freq[num]++;
         }
 
-        return st.size();  // Return the number of unique pairs
+        // Check for pairs
+        for (auto& [num, count] : freq) {
+            if (k == 0) {
+                // Special case: k = 0, count pairs with duplicates
+                if (count > 1) {
+                    ans++;
+                }
+            } else {
+                // General case: Check for `num + k`
+                if (freq.count(num + k)) {
+                    ans++;
+                }
+            }
+        }
+
+        return ans;
     }
 };
