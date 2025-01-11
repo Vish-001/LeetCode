@@ -13,40 +13,43 @@ public:
         return false;
     }
 
-    int maxRectangleArea(vector<vector<int>>& points) {
+    int maxRectangleArea(vector<vector<int>>& points) 
+    {
         int n = points.size();
         sort(points.begin(), points.end());
-        int maxarea = -1, prevmax = -1; //to store the max area and prev max area
-        set<pair<int,int>> check; //set to track points outside the rectangle
+        int maxarea = -1, prevmax = -1; 
+        set<pair<int,int>> check;
 
-        for (int i = 0; i < n - 3; i++) {
-            if (points[i][0] != points[i+1][0]) continue; //ensuring points[i] and points[i+1] form a vertical edge
+        for (int i = 0; i < n - 3; i++) 
+        {
+            if (points[i][0] != points[i+1][0]) continue; 
 
-            //loop to identify opposite vertical edge
-            for (int j = i + 2; j < n - 1; j++) {
-                if (points[j][1] != points[i][1]) { 
-                    //if points[j] doesn't share the same ycoord as points[i] add it to check 
+            for (int j = i + 2; j < n - 1; j++) 
+            {
+                if (points[j][1] != points[i][1]) 
+                { 
                     check.insert({points[j][0], points[j][1]});
                     continue;
                 }
-                if (points[j+1][1] != points[i+1][1]) {
-                    //if points[j+1] doesn't share the same ycoord as points[i+1] add it to check
+                if (points[j+1][1] != points[i+1][1]) 
+                {
                     check.insert({points[j][0], points[j][1]});
                     continue;
                 }
 
-                //calculate area of the rectangle if valid
                 int area = (points[i+1][1] - points[i][1]) * (points[j][0] - points[i+1][0]);
-                if (area > maxarea) { 
+                if (area > maxarea) 
+                { 
                     prevmax = maxarea; 
                     maxarea = area; 
 
-                    if (!check.empty() && helper(check, i, j, points)) {
+                    if (!check.empty() && helper(check, i, j, points)) 
+                    {
                         maxarea = prevmax;
                     }
                 }
             }
-            check.clear(); //clear the check after each iteration
+            check.clear();
         }
         return maxarea;
     }
