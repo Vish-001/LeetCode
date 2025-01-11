@@ -2,21 +2,22 @@ class Solution {
 public:
     bool canConstruct(string s, int k) 
     {
-        if (k > s.size()) return false;
 
-        unordered_map<char, int> freq;
-        for (char c : s) 
+        if (s.size() < k) 
         {
-            freq[c]++;
+            return false;
+        }
+
+        int letterCount[26] = {0};
+        for (char& c : s)
+        {
+            ++letterCount[c - 'a'];
         }
 
         int oddCount = 0;
-        for (auto& [ch, count] : freq) 
+        for (int count : letterCount) 
         {
-            if (count % 2 != 0) 
-            {
-                oddCount++;
-            }
+            oddCount += count & 1;
         }
 
         return oddCount <= k;
