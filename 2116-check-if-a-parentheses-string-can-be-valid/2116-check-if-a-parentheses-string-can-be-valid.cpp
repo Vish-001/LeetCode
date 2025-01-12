@@ -1,37 +1,34 @@
 class Solution {
 public:
-    bool canBeValid(string s, string locked) {
-        int n = s.length();
-        if (n % 2 != 0) {
-            return false; // Odd length cannot form valid parentheses
-        }
+    bool canBeValid(string s, string locked) 
+    {
+        if(s.size()%2!=0) return false;
+        int open=0;
+        int close=0;
 
-        // Left-to-right pass: Ensure there are enough open brackets
-        int openCount = 0;
-        for (int i = 0; i < n; i++) {
-            if (s[i] == '(' || locked[i] == '0') {
-                openCount++;
-            } else { // s[i] == ')' and locked[i] == '1'
-                openCount--;
+        for(int i=0;i<s.size();i++)
+        {
+            int j=s.size()-1-i;
+            if(s[i]=='(' || locked[i]=='0')
+            {
+                open++;
             }
-            if (openCount < 0) {
-                return false; // Too many ')' encountered
+            else
+            {
+                open--;
+                if(open<0) return false;
             }
-        }
 
-        // Right-to-left pass: Ensure there are enough close brackets
-        int closeCount = 0;
-        for (int i = n - 1; i >= 0; i--) {
-            if (s[i] == ')' || locked[i] == '0') {
-                closeCount++;
-            } else { // s[i] == '(' and locked[i] == '1'
-                closeCount--;
+            if(s[j]==')' || locked[j]=='0')
+            {
+                close++;
             }
-            if (closeCount < 0) {
-                return false; // Too many '(' encountered
+            else
+            {
+                close--;
+                if(close<0) return false;
             }
         }
-
         return true;
     }
 };
