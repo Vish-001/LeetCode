@@ -7,13 +7,17 @@ public:
         for(auto c:s)
         {
             mp[c]++;
+            if(mp[c]>=3)
+            {
+                mp[c]=1;
+            }
         }
         for(auto &p:mp)
         {
-            while(p.second>=3)
-            {
-                p.second-=2;
-            }
+            // while(p.second>=3)
+            // {
+            //     p.second-=2;
+            // }
             ans+=p.second;
         }
         return ans;
