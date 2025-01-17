@@ -1,77 +1,39 @@
 class Solution {
 public:
-
-    bool isSafe(int row,int col,int n,vector<string>board)
-    {
-        int duprow=row;
-        int dupcol=col;
-        // checking for row
-        while(dupcol>=0)
-        {
-            if(board[row][dupcol]=='Q')
-            {
-                return false;
-            }
-            dupcol--;
-        }
-        dupcol=col;
-
-        // checking for udigonal
-        while(dupcol>=0 && duprow>=0)
-        {
-            if(board[duprow][dupcol]=='Q')
-            {
-                return false;
-            }
-            dupcol--;
-            duprow--;
-        }
-        duprow=row;
-        dupcol=col;
-
-        // checking for ddigonal
-        while(duprow<n && dupcol>=0)
-        {
-            if(board[duprow][dupcol]=='Q')
-            {
-                return false;
-            }
-            duprow++;
-            dupcol--;
-
-        }
-
-        return true;
-    }
-
-    void Solve(int col,vector<string>board,vector<vector<string>>&ans,int n)
-    {
-        if(col==n)
-        {
+    void Func(int col, vector<string>& board, vector<int>& rowHash, vector<int>& upperDiag, vector<int>& lowerDiag, int n, vector<vector<string>>& ans) {
+        if (col == n) {
             ans.push_back(board);
             return;
         }
-        for(int row=0;row<n;row++)
-        {
-            if(isSafe(row,col,n,board))
-            {
-                board[row][col]='Q';
-                Solve(col+1,board,ans,n);
-                board[row][col]='.';
+
+        for (int row = 0; row < n; row++) {
+            if (rowHash[row] == 0 && upperDiag[row + col] == 0 && lowerDiag[(n - 1) + (row - col)] == 0) {
+                // Place the queen
+                rowHash[row] = 1;
+                upperDiag[row + col] = 1;
+                lowerDiag[(n - 1) + (row - col)] = 1;
+                board[row][col] = 'Q';
+
+                // Recur to the next column
+                Func(col + 1, board, rowHash, upperDiag, lowerDiag, n, ans);
+
+                // Backtrack
+                rowHash[row] = 0;
+                upperDiag[row + col] = 0;
+                lowerDiag[(n - 1) + (row - col)] = 0;
+                board[row][col] = '.';
             }
         }
     }
 
-    vector<vector<string>> solveNQueens(int n) 
-    {
-        vector<vector<string>>ans;
-        vector<string>board(n);
-        string s(n,'.');
-        for(int i=0;i<n;i++)
-        {
-            board[i]=s;
-        }
-        Solve(0,board,ans,n);
+    vector<vector<string>> solveNQueens(int n) {
+        vector<vector<string>> ans;
+        vector<string> board(n, string(n, '.')); // Initialize an empty board
+        vector<int> rowHash(n, 0);               // Hash to track rows
+        vector<int> upperDiag(2 * n - 1, 0);     // Hash to track upper diagonals
+        vector<int> lowerDiag(2 * n - 1, 0);     // Hash to track lower diagonals
+
+        Func(0, board, rowHash, upperDiag, lowerDiag, n, ans);
         return ans;
     }
 };
