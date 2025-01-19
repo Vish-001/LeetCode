@@ -1,27 +1,26 @@
 class Solution {
 public:
-    int characterReplacement(string s, int k) 
-    {
-        unordered_map<char,int>mp;
-        int l=0;
-        int r=0;
-        int mf=0;
-        int ans=0;
-        while(r<s.size())
-        {
+    int characterReplacement(string s, int k) {
+        int r = 0, l = 0, ans = 0, mf = 0;
+        unordered_map<char, int> mp;
+
+        while (r < s.size()) {
+            // Add the current character to the window
             mp[s[r]]++;
-            mf=max(mf,mp[s[r]]);
-            if(((r-l+1)-mf) > k)
-            {
-                mp[s[l]]--;
+            mf = max(mf, mp[s[r]]); // Update the max frequency in the window
+
+            // If the current window is invalid (too many replacements needed)
+            while ((r - l + 1) - mf > k) {
+                mp[s[l]]--; // Shrink the window from the left
                 l++;
             }
-            else
-            {
-                ans=max(ans,r-l+1);
-            }
-            r++;
+
+            // Update the answer with the current valid window size
+            ans = max(ans, r - l + 1);
+
+            r++; // Expand the window to the right
         }
+
         return ans;
     }
 };
