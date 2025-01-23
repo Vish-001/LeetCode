@@ -1,40 +1,44 @@
 class Solution {
 public:
-    bool Func(int i,int open,int close,string &s)
-    {
-        if(close>open) return false;
-        if(i==s.size())
-        {
-            if(open==close)
-            {
-                return true;
-            }
+    bool Func(int i, int open, int close, const string &s, vector<vector<vector<int>>> &dp) {
+        // Check if this state has been computed before
+        if (dp[i][open][close] != -1) {
+            return dp[i][open][close] == 1;
+        }
+
+        // If more closing brackets than opening, invalid string
+        if (close > open) {
+            dp[i][open][close] = 0;
             return false;
         }
-        if(s[i]=='*')
-        {
-            bool a=Func(i+1,open+1,close,s);
-            bool b=Func(i+1,open,close+1,s);
-            bool c=Func(i+1,open,close,s);
-            return (a || (b || c));
+        
+        // If we've processed all characters
+        if (i == s.size()) {
+            bool result = (open == close);
+            dp[i][open][close] = result ? 1 : 0;
+            return result;
         }
-        else if(s[i]=='(')
-        {
-            return Func(i+1,open+1,close,s);
+
+        bool result;
+        if (s[i] == '*') {
+            // '*' can be treated as '(', ')', or ignored
+            result = Func(i + 1, open + 1, close, s, dp) || // as '('
+                     Func(i + 1, open, close + 1, s, dp) || // as ')'
+                     Func(i + 1, open, close, s, dp);       // as ''
+        } else if (s[i] == '(') {
+            result = Func(i + 1, open + 1, close, s, dp);
+        } else { // s[i] == ')'
+            result = Func(i + 1, open, close + 1, s, dp);
         }
-        else
-        {
-            return Func(i+1,open,close+1,s);
-        }
+
+        // Store the result in dp for future use
+        dp[i][open][close] = result ? 1 : 0;
+        return result;
     }
 
-
-    bool checkValidString(string s) 
-    {
-        if(s=="**************************************************))))))))))))))))))))))))))))))))))))))))))))))))))") return true;
-        if(s==
-"************************************************************" || s=="******************************************************************************************") return true;
-if(s=="*************************************************************************************************((*") return false;
-        return Func(0,0,0,s);
+    bool checkValidString(string s) {
+        // Initialize dp with -1 to indicate not computed states
+        vector<vector<vector<int>>> dp(s.size() + 1, vector<vector<int>>(s.size() + 1, vector<int>(s.size() + 1, -1)));
+        return Func(0, 0, 0, s, dp);
     }
 };
