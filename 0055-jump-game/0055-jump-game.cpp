@@ -2,17 +2,13 @@ class Solution {
 public:
     bool canJump(vector<int>& nums) 
     {
-        if(nums[0]==0 && nums.size()<=1) return true;
-        int mxidx=0;
-        for(int i=0;i<nums.size();i++)
+        int maxi=0;
+        for(int i=0;i<nums.size()-1;i++)
         {
-            if(i>mxidx) return false;
-            mxidx=max(mxidx,nums[i]+i);
+            maxi=max(maxi,nums[i]+i);
+            if(maxi<i+1) return false;
         }
-        if(mxidx>=nums.size()-1)
-        {
-            return true;
-        }
-        return false;
+        if(maxi<nums.size()-1) return false;
+        return true;
     }
 };
