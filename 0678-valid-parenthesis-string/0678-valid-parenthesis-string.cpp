@@ -1,44 +1,30 @@
 class Solution {
 public:
-    bool Func(int i, int open, int close, const string &s, vector<vector<vector<int>>> &dp) {
-        // Check if this state has been computed before
-        if (dp[i][open][close] != -1) {
-            return dp[i][open][close] == 1;
-        }
-
-        // If more closing brackets than opening, invalid string
-        if (close > open) {
-            dp[i][open][close] = 0;
-            return false;
-        }
-        
-        // If we've processed all characters
-        if (i == s.size()) {
-            bool result = (open == close);
-            dp[i][open][close] = result ? 1 : 0;
-            return result;
-        }
-
-        bool result;
-        if (s[i] == '*') {
-            // '*' can be treated as '(', ')', or ignored
-            result = Func(i + 1, open + 1, close, s, dp) || // as '('
-                     Func(i + 1, open, close + 1, s, dp) || // as ')'
-                     Func(i + 1, open, close, s, dp);       // as ''
-        } else if (s[i] == '(') {
-            result = Func(i + 1, open + 1, close, s, dp);
-        } else { // s[i] == ')'
-            result = Func(i + 1, open, close + 1, s, dp);
-        }
-
-        // Store the result in dp for future use
-        dp[i][open][close] = result ? 1 : 0;
-        return result;
-    }
-
+    /**
+     * @brief Checks if the given string of parentheses can be valid.
+     * @param s The string to check for validity
+     * @return bool Returns true if the string can be valid, false otherwise
+     */
     bool checkValidString(string s) {
-        // Initialize dp with -1 to indicate not computed states
-        vector<vector<vector<int>>> dp(s.size() + 1, vector<vector<int>>(s.size() + 1, vector<int>(s.size() + 1, -1)));
-        return Func(0, 0, 0, s, dp);
+        int minOpen = 0;  // Minimum count of unmatched '('
+        int maxOpen = 0;  // Maximum count of unmatched '(' including '*' as '('
+
+        for (char c : s) {
+            if (c == '(') {
+                minOpen++;
+                maxOpen++;
+            } else if (c == ')') {
+                minOpen = max(0, minOpen - 1);  // Decrease if possible, else it's invalid
+                maxOpen--;
+                if (maxOpen < 0) return false;  // If we have more ')' than possible '(' or '*', it's invalid
+            } else { // c == '*'
+                // '*' can be '(', ')', or nothing
+                minOpen = max(0, minOpen - 1);  // Treat '*' as ')' if possible to balance
+                maxOpen++;
+            }
+        }
+
+        // After processing all characters, if all '(' can be matched, it's valid
+        return minOpen == 0;
     }
 };
