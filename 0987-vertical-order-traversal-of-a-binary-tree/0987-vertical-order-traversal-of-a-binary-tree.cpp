@@ -1,54 +1,44 @@
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution {
 public:
     vector<vector<int>> verticalTraversal(TreeNode* root) 
     {
-        queue<pair<TreeNode*,pair<int,int>>>todo;
-        map<int,map<int,multiset<int>>>nodes;
+        vector<vector<int>> ans;
+        if (root == nullptr) return ans;
 
-        todo.push({root,{0,0}});
+        // Map to group nodes by horizontal position and level
+        map<int, map<int, multiset<int>>> nodes; // {posn -> {level -> {node_values}}}
 
-        while(!todo.empty())
-        {
-            auto p=todo.front();
-            todo.pop();
+        queue<pair<TreeNode*, pair<int, int>>> q; // {node, {posn, level}}
+        q.push({root, {0, 0}});
 
-            TreeNode*node=p.first;
-            int x=p.second.first;
-            int y=p.second.second;
+        while (!q.empty()) {
+            auto p = q.front();
+            q.pop();
+            TreeNode* node = p.first;
+            int posn = p.second.first;
+            int lvl = p.second.second;
 
-            nodes[x][y].insert(node->val);
+            // Add the current node's value to the map
+            nodes[posn][lvl].insert(node->val);
 
-            if(node->left)
-            {
-                todo.push({node->left,{x-1,y+1}});
+            // Add left and right children with updated horizontal positions and levels
+            if (node->left) {
+                q.push({node->left, {posn - 1, lvl + 1}});
             }
-            if(node->right)
-            {
-                todo.push({node->right,{x+1,y+1}});
+            if (node->right) {
+                q.push({node->right, {posn + 1, lvl + 1}});
             }
         }
-        vector<vector<int>>ans;
-        for (auto verticalLevel : nodes)
-        {
+
+        // Construct the result
+        for (auto& [posn, levels] : nodes) {
             vector<int> column;
-            for (auto horizontalLevel : verticalLevel.second)
-            {
-                column.insert(column.end(), horizontalLevel.second.begin(),
-                 horizontalLevel.second.end());
+            for (auto& [lvl, values] : levels) {
+                column.insert(column.end(), values.begin(), values.end());
             }
             ans.push_back(column);
         }
+
         return ans;
     }
 };
