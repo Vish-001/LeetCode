@@ -1,49 +1,41 @@
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
-class Solution {
+class Solution 
+{
 public:
     int widthOfBinaryTree(TreeNode* root) 
     {
-        if(root==nullptr) return 0;
-        int ans=0;
-        queue<pair<TreeNode*,long>> q;
-        q.push({root, 0});
-        
-        while(!q.empty())
+        if(!root) return 0;
+        long long ans=0;
+
+        queue<pair<TreeNode*,int>>todo;
+        todo.push({root,0});
+
+        while(!todo.empty())
         {
-            int n=q.size();
-            long first_pos = q.front().second;
-            long last_pos = first_pos;
-            
-            for(int i=0; i<n; i++)
+            int k=todo.size();
+            long long mini=todo.front().second;
+            long long last,first;
+
+            for(int i=0;i<k;i++)
             {
-                auto p=q.front();
-                q.pop();
-                TreeNode* node = p.first;
-                long pos = p.second;
-                last_pos = pos;
+                auto p=todo.front();
+                todo.pop();
+                long long curr=p.second-mini;
+                TreeNode*Node=p.first;
+
+                if(i==0) first=curr;
+                if(i==k-1) last=curr;
                 
-                long adjusted_pos = pos - first_pos;
-                
-                if(node->left)
-                    q.push({node->left, 2*adjusted_pos});
-                if(node->right)
-                    q.push({node->right, 2*adjusted_pos + 1});
+                if(Node->left)
+                {
+                    todo.push({Node->left,2*curr+1});
+                }
+                if(Node->right)
+                {
+                    todo.push({Node->right,2*curr+2});
+                }
             }
-            
-            int current_width = last_pos - first_pos + 1;
-            ans = max(ans, current_width);
+            ans=max(ans,last-first+1);
         }
-        
         return ans;
     }
 };
