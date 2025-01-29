@@ -1,28 +1,35 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
 class Solution {
 public:
-    TreeNode* Build(vector<int>& preorder, vector<int>& inorder, int& idx,
-                    int st, int ed, map<int, int>& mp) 
-                    {
-        if (st > ed) return nullptr; 
+    TreeNode* Build(vector<int>& preorder, int sidx, int eidx, map<int, int>& mp, int& preIndex) {
+        if (sidx > eidx) return nullptr;
+        
+        TreeNode* node = new TreeNode(preorder[preIndex++]);
+        int inorderIdx = mp[node->val];
 
-        // Create the current root node
-        TreeNode* root = new TreeNode(preorder[idx]);
-        int inRoot = mp[preorder[idx]]; // Index of the root in `inorder`
-        idx++; // Move to the next root in `preorder`
+        node->left = Build(preorder, sidx, inorderIdx - 1, mp, preIndex);
+        node->right = Build(preorder, inorderIdx + 1, eidx, mp, preIndex);
 
-        // Recursively construct the left and right subtrees
-        root->left = Build(preorder, inorder, idx, st, inRoot - 1, mp);
-        root->right = Build(preorder, inorder, idx, inRoot + 1, ed, mp);
-
-        return root;
+        return node;
     }
 
     TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
-        map<int, int> mp; // Map to store indices of elements in `inorder`
+        map<int, int> mp;
         for (int i = 0; i < inorder.size(); i++) {
-            mp[inorder[i]] = i;
+            mp[inorder[i]] = i; // Store indices of inorder elements
         }
-        int idx = 0; // Pointer to track the current root in `preorder`
-        return Build(preorder, inorder, idx, 0, inorder.size() - 1, mp);
+
+        int preIndex = 0; // Global index for preorder traversal
+        return Build(preorder, 0, inorder.size() - 1, mp, preIndex);
     }
 };
