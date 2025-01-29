@@ -16,11 +16,11 @@ public:
         if(root==nullptr) return 0;
         queue<pair<TreeNode*,int>>q;
         q.push({root,0});
-        long ans=0;
+        int ans=0;
         while(!q.empty())
         {
             int n=q.size();
-            long first,last;
+            int first,last;
             int mini=q.front().second;
             for(int i=0;i<n;i++)
             {
