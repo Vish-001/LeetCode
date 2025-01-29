@@ -1,73 +1,73 @@
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+
 
 class Solution {
 public:
-    // Helper function to build a parent-child map
-    void Build(TreeNode* root, TreeNode* parent, unordered_map<TreeNode*, TreeNode*>& parentMap) {
+    void Build(TreeNode* root, map<TreeNode*, TreeNode*>& mp) {
         if (root == nullptr) return;
-        parentMap[root] = parent;
-        Build(root->left, root, parentMap);
-        Build(root->right, root, parentMap);
+        if (root->left) {
+            mp[root->left] = root;
+            Build(root->left, mp);
+        }
+        if (root->right) {
+            mp[root->right] = root;
+            Build(root->right, mp);
+        }
     }
 
     vector<int> distanceK(TreeNode* root, TreeNode* target, int k) {
-        unordered_map<TreeNode*, TreeNode*> parentMap; // To store parent pointers
-        Build(root, nullptr, parentMap);
+        if (k == 0) {
+            return {target->val};
+        }
 
-        vector<int> result;
-        unordered_set<TreeNode*> visited; // To avoid revisiting nodes
-        queue<TreeNode*> q; // BFS queue
+        map<TreeNode*, TreeNode*> mp;
+        Build(root, mp);
 
-        q.push(target); // Start BFS from the target node
-        visited.insert(target);
-
-        int currentDistance = 0;
+        vector<int> ans;
+        unordered_set<TreeNode*> vis;
+        queue<TreeNode*> q;
+        q.push(target);  // Fixed: Added semicolon
+        vis.insert(target);
+        int lvl = 0;
 
         while (!q.empty()) {
-            if (currentDistance == k) {
-                // Collect all nodes at distance k
-                while (!q.empty()) {
-                    TreeNode* node = q.front();
-                    q.pop();
-                    result.push_back(node->val);
-                }
-                break;
-            }
+            int n = q.size();
+            bool isTargetLevel = (lvl == k);
 
-            int levelSize = q.size(); // Number of nodes at the current level
-            for (int i = 0; i < levelSize; i++) {
+            for (int i = 0; i < n; ++i) {
                 TreeNode* node = q.front();
                 q.pop();
 
-                // Add left child to the queue if not visited
-                if (node->left && visited.find(node->left) == visited.end()) {
+                if (isTargetLevel) {
+                    ans.push_back(node->val);
+                    continue;
+                }
+
+                // Check left child
+                if (node->left && vis.find(node->left) == vis.end()) {  // Fixed: vis.end -> vis.end()
+                    vis.insert(node->left);
                     q.push(node->left);
-                    visited.insert(node->left);
                 }
 
-                // Add right child to the queue if not visited
-                if (node->right && visited.find(node->right) == visited.end()) {
+                // Check right child
+                if (node->right && vis.find(node->right) == vis.end()) {  // Fixed: vis.end -> vis.end()
+                    vis.insert(node->right);
                     q.push(node->right);
-                    visited.insert(node->right);
                 }
 
-                // Add parent to the queue if not visited
-                if (parentMap[node] && visited.find(parentMap[node]) == visited.end()) {
-                    q.push(parentMap[node]);
-                    visited.insert(parentMap[node]);
+                // Check parent
+                if (mp.find(node) != mp.end()) {  // Fixed: mp.found -> mp.find()
+                    TreeNode* parent = mp[node];
+                    if (vis.find(parent) == vis.end()) {
+                        vis.insert(parent);
+                        q.push(parent);
+                    }
                 }
             }
-            currentDistance++;
+
+            if (isTargetLevel) break;
+            lvl++;  // Critical fix: Increment level after processing each level
         }
 
-        return result;
+        return ans;
     }
 };
