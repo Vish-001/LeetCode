@@ -1,40 +1,46 @@
-class Solution 
-{
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
 public:
     int widthOfBinaryTree(TreeNode* root) 
     {
-        if(!root) return 0;
-        long long ans=0;
-
-        queue<pair<TreeNode*,int>>todo;
-        todo.push({root,0});
-
-        while(!todo.empty())
+        if(root==nullptr) return 0;
+        queue<pair<TreeNode*,int>>q;
+        q.push({root,0});
+        long ans=0;
+        while(!q.empty())
         {
-            int k=todo.size();
-            long long mini=todo.front().second;
-            long long last,first;
-
-            for(int i=0;i<k;i++)
+            int n=q.size();
+            long first,last;
+            int mini=q.front().second;
+            for(int i=0;i<n;i++)
             {
-                auto p=todo.front();
-                todo.pop();
-                long long curr=p.second-mini;
-                TreeNode*Node=p.first;
-
+                auto P=q.front();
+                q.pop();
+                auto node=P.first;
+                long curr=P.second;
                 if(i==0) first=curr;
-                if(i==k-1) last=curr;
-                
-                if(Node->left)
+                if(i==n-1) last=curr;
+                // curr=curr-1;
+                if(node->left)
                 {
-                    todo.push({Node->left,2*curr+1});
+                    q.push({node->left,(2*curr)+1});
                 }
-                if(Node->right)
+                if(node->right)
                 {
-                    todo.push({Node->right,2*curr+2});
+                    q.push({node->right,(2*curr)+2});
                 }
             }
-            ans=max(ans,last-first+1);
+            ans=max(ans,((last-first)+1));
         }
         return ans;
     }
