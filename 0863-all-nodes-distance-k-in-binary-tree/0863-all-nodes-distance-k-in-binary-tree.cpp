@@ -1,78 +1,73 @@
-
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 
 class Solution {
 public:
-    void Build(TreeNode* root, map<TreeNode*, TreeNode*>& PM) 
-    {
+    // Helper function to build a parent-child map
+    void Build(TreeNode* root, TreeNode* parent, unordered_map<TreeNode*, TreeNode*>& parentMap) {
         if (root == nullptr) return;
-        if (root->left) 
-        {
-            PM[root->left] = root;
-            Build(root->left, PM);
-        }
-        if (root->right) 
-        {
-            PM[root->right] = root;
-            Build(root->right, PM);
-        }
+        parentMap[root] = parent;
+        Build(root->left, root, parentMap);
+        Build(root->right, root, parentMap);
     }
 
-    vector<int> distanceK(TreeNode* root, TreeNode* target, int k) 
-    {
-        map<TreeNode*, TreeNode*> PM;
-        Build(root, PM);
+    vector<int> distanceK(TreeNode* root, TreeNode* target, int k) {
+        unordered_map<TreeNode*, TreeNode*> parentMap; // To store parent pointers
+        Build(root, nullptr, parentMap);
 
-        queue<pair<TreeNode*, int>> q;
-        unordered_set<TreeNode*> visited;
-        vector<int> ans;
+        vector<int> result;
+        unordered_set<TreeNode*> visited; // To avoid revisiting nodes
+        queue<TreeNode*> q; // BFS queue
 
-        if (k == 0) 
-        {
-            ans.push_back(target->val);
-            return ans;
-        }
-
-        q.push({target, 0});
+        q.push(target); // Start BFS from the target node
         visited.insert(target);
 
-        while (!q.empty()) 
-        {
-            int n = q.size();
-            for (int i = 0; i < n; ++i) 
-            {
-                auto p = q.front();
+        int currentDistance = 0;
+
+        while (!q.empty()) {
+            if (currentDistance == k) {
+                // Collect all nodes at distance k
+                while (!q.empty()) {
+                    TreeNode* node = q.front();
+                    q.pop();
+                    result.push_back(node->val);
+                }
+                break;
+            }
+
+            int levelSize = q.size(); // Number of nodes at the current level
+            for (int i = 0; i < levelSize; i++) {
+                TreeNode* node = q.front();
                 q.pop();
-                TreeNode* node = p.first;
-                int lvl = p.second;
 
-                if (lvl == k) 
-                {
-                    ans.push_back(node->val);
-                    continue;
-                }
-
-                if (node->left && visited.find(node->left) == visited.end()) 
-                {
+                // Add left child to the queue if not visited
+                if (node->left && visited.find(node->left) == visited.end()) {
+                    q.push(node->left);
                     visited.insert(node->left);
-                    q.push({node->left, lvl + 1});
                 }
-                if (node->right && visited.find(node->right) == visited.end()) 
-                {
+
+                // Add right child to the queue if not visited
+                if (node->right && visited.find(node->right) == visited.end()) {
+                    q.push(node->right);
                     visited.insert(node->right);
-                    q.push({node->right, lvl + 1});
                 }
-                if (PM.find(node) != PM.end()) 
-                {
-                    TreeNode* parent = PM[node];
-                    if (visited.find(parent) == visited.end()) 
-                    {
-                        visited.insert(parent);
-                        q.push({parent, lvl + 1});
-                    }
+
+                // Add parent to the queue if not visited
+                if (parentMap[node] && visited.find(parentMap[node]) == visited.end()) {
+                    q.push(parentMap[node]);
+                    visited.insert(parentMap[node]);
                 }
             }
+            currentDistance++;
         }
 
-        return ans;
+        return result;
     }
 };
