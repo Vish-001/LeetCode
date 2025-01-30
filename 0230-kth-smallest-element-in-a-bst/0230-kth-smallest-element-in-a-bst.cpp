@@ -1,17 +1,23 @@
 class Solution {
 public:
-    void preOrderTraversal(TreeNode* root, vector<int> &v){
-        if(root == NULL)    return;
+    void inOrderTraversal(TreeNode* root, int k, int &i, int &ans) {
+        if (root == nullptr) return;
         
-        //root, left, right 
-        v.push_back(root->val);
-        preOrderTraversal(root->left, v);
-        preOrderTraversal(root->right, v);      
+        inOrderTraversal(root->left, k, i, ans);
+        
+        i++; // Increase the count
+        if (i == k) { // When k-th smallest is found
+            ans = root->val;
+            return;
+        }
+        
+        inOrderTraversal(root->right, k, i, ans);      
     }
+
     int kthSmallest(TreeNode* root, int k) {
-        vector<int> v; 
-        preOrderTraversal(root, v);
-        sort(v.begin(), v.end());
-        return v[k-1];
+        int ans = -1; // Initialize to a value that indicates failure
+        int i = 0; // Counter for in-order traversal
+        inOrderTraversal(root, k, i, ans);
+        return ans;
     }
 };
