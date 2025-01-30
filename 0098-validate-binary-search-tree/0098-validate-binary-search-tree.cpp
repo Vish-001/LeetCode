@@ -1,20 +1,18 @@
 class Solution {
 public:
-    bool Build(TreeNode* temp, long long low, long long high) {
-        if (temp == nullptr) return true; // Base case: empty subtree is valid
-        if (temp->val >= high || temp->val <= low) return false; // Node value is out of valid range
+    bool Inorder(TreeNode* root, TreeNode*& prev) {
+        if (root == nullptr) return true;
 
-        // Recursively check the left and right subtrees
-        bool L = Build(temp->left, low, temp->val);
-        bool R = Build(temp->right, temp->val, high);
+        if (!Inorder(root->left, prev)) return false;
 
-        return L && R;
+        if (prev != nullptr && root->val <= prev->val) return false;
+        prev = root; // Update prev to the current node
+
+        return Inorder(root->right, prev);
     }
-    
-    bool isValidBST(TreeNode* root) 
-    {
-        long long low = LLONG_MIN; // Use LLONG_MIN for long long type
-        long long high = LLONG_MAX; // Use LLONG_MAX for long long type
-        return Build(root, low, high);
+
+    bool isValidBST(TreeNode* root) {
+        TreeNode* prev = nullptr; // Use pointer to handle INT_MIN case
+        return Inorder(root, prev);
     }
 };
