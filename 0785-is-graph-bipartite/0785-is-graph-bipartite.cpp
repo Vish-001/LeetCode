@@ -1,44 +1,40 @@
 class Solution {
 public:
-    bool DFS(int s, vector<int>& col, vector<vector<int>>& graph) 
-    {
-        stack<int> st;
-        st.push(s);
-        col[s] = 0; // Start with color 0
-
-        while (!st.empty()) 
-        {
-            int node = st.top();
-            st.pop();
-
-            for (int neighbor : graph[node]) 
-            {
-                if (col[neighbor] == -1) 
-                {
-                    col[neighbor] = 1 - col[node]; // Assign opposite color
-                    st.push(neighbor);
-                } 
-                else if (col[neighbor] == col[node]) 
-                {
-                    return false; // Same color detected
-                }
-            }
-        }
-        return true;
-    }
-
     bool isBipartite(vector<vector<int>>& graph) 
     {
         int n = graph.size();
-        vector<int> col(n, -1); // Color array, -1 indicates uncolored
+        vector<int> vis(n, -1);
+        vector<int> color(n, -1);
 
-        for (int i = 0; i < n; i++) 
+        for (int start = 0; start < n; start++) 
         {
-            if (col[i] == -1) 
-            { 
-                if (!DFS(i, col, graph)) 
+            if (vis[start] == -1) // Check all components
+            {
+                queue<pair<int, int>> q;
+                q.push({start, 0});
+                vis[start] = 1;
+                color[start] = 0;
+
+                while (!q.empty())
                 {
-                    return false; 
+                    auto p = q.front();
+                    q.pop();
+                    int node = p.first;
+                    int col = p.second;
+
+                    for (auto c : graph[node])
+                    {
+                        if (vis[c] == -1)
+                        {
+                            vis[c] = 1;
+                            color[c] = 1 - col;
+                            q.push({c, color[c]});
+                        }
+                        else if (color[c] == col)
+                        {
+                            return false;
+                        }
+                    }
                 }
             }
         }
