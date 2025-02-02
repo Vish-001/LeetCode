@@ -1,52 +1,42 @@
 class Solution {
 public:
     int leastInterval(vector<char>& tasks, int n) {
-        int freq[26] = {0};
-        for (auto c : tasks) {
-            freq[c - 'A']++;
+        priority_queue<pair<int, char>> q;
+        unordered_map<char, int> mp;
+        for (char c : tasks) {
+            mp[c]++;
         }
-
-        priority_queue<int> pq;
-        for (int i = 0; i < 26; i++) {
-            if (freq[i] > 0) {
-                pq.push(freq[i]);
-            }
+        for (auto it : mp) {
+            q.push({it.second, it.first});
         }
-
+        pair<int, char> temp;
+        vector<pair<int, char>> vt;
         int ans = 0;
-        while (!pq.empty()) 
-        {
-            vector<int> temp;
-            int cnt = 0; 
-            for (int i = 0; i <= n; i++) 
-            { 
-                if (!pq.empty()) 
-                {
-                    int fq = pq.top();
-                    pq.pop();
-                    if (fq > 1) 
-                    {
-                        temp.push_back(fq - 1);
-                    }
-                    cnt++;
+        int i = 0;
+        int qsiz = q.size();
+        while (!q.empty()) {
+            qsiz = q.size();
+            while (i < min(n + 1, qsiz)) {
+                vt.push_back({q.top().first, q.top().second});
+                q.pop();
+                i++;
+            }
+            i = 0;
+            for (pair<int, char> x : vt) {
+                if (x.first > 1) {
+                    q.push({x.first - 1, x.second});
                 }
             }
 
-            for (auto c : temp) 
-            {
-                pq.push(c);
-            }
-
-            if (!pq.empty()) 
-            {
+            if (q.empty()) {
+                //cout << vt.size() << "\n";
+                ans += vt.size();
+            } else {
+                //cout << max(n + 1, (int)vt.size()) << "\n";
                 ans += n + 1;
-            } 
-            else 
-            {
-                ans += cnt;
             }
+            vt.clear();
         }
-
         return ans;
     }
 };
