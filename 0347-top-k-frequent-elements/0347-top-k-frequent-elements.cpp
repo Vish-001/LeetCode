@@ -1,28 +1,41 @@
+#include <vector>
+#include <queue>
+#include <unordered_map>
+#include <utility>
+
+using namespace std;
+
 class Solution {
 public:
-    vector<int> topKFrequent(vector<int>& nums, int k) 
-    {
-        priority_queue<pair<int,int>>pq;
-        unordered_map<int,int>mp;
+    vector<int> topKFrequent(vector<int>& nums, int k) {
+        // Step 1: Calculate the frequency of each element
+        unordered_map<int, int> mp;
+        for (int num : nums) {
+            mp[num]++;
+        }
+
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+        unordered_set<int>st;
+        for (auto& it : mp) {
+            pq.push({it.second, it.first});
+            if (pq.size() > k) 
+            {
+                auto t=pq.top();
+                st.insert(t.second);
+                pq.pop(); 
+            }
+        }
+
+        vector<int> ans;
         for(auto c:nums)
         {
-            mp[c]++;
+            if(st.find(c)==st.end())
+            {
+                ans.push_back(c);
+                st.insert(c);
+            }
         }
-        for(auto it:mp)
-        {
-            int freq=it.first;
-            int i=it.second;
-            pq.push({i,freq});
-        }
-        vector<int>ans;
-        while(!pq.empty() && k>0)
-        {
-            auto p=pq.top();
-            pq.pop();
-            ans.push_back(p.second);
-            k--;
-        }
-        
+
         return ans;
     }
 };
