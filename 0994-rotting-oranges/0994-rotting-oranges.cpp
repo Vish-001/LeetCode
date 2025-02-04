@@ -30,7 +30,7 @@ public:
             int row=p.first.first;
             int col=p.first.second;
             int t=p.second;
-            time=max(time,t);
+            time=t;
             for(int i=0;i<4;i++)
             {
                 int nr=dr[i]+row;
