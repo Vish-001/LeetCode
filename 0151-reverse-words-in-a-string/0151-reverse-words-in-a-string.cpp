@@ -15,8 +15,10 @@ public:
                 i++;
             }
             reverse(s.begin()+ws,s.begin()+st);
-
-            if(i<s.size()) s[st++]=' ';
+            if(i<s.size())
+            {
+                s[st++]=' ';
+            }
         }
         if(s[s.size()-1]==' ') st--;
         s.resize(st);
