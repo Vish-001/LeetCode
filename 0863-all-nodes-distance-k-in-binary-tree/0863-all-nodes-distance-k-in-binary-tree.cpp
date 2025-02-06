@@ -2,20 +2,25 @@
 
 class Solution {
 public:
-    void Build(TreeNode* root, map<TreeNode*, TreeNode*>& mp) {
+    void Build(TreeNode* root, map<TreeNode*, TreeNode*>& mp) 
+    {
         if (root == nullptr) return;
-        if (root->left) {
+        if (root->left) 
+        {
             mp[root->left] = root;
             Build(root->left, mp);
         }
-        if (root->right) {
+        if (root->right) 
+        {
             mp[root->right] = root;
             Build(root->right, mp);
         }
     }
 
-    vector<int> distanceK(TreeNode* root, TreeNode* target, int k) {
-        if (k == 0) {
+    vector<int> distanceK(TreeNode* root, TreeNode* target, int k) 
+    {
+        if (k == 0) 
+        {
             return {target->val};
         }
 
@@ -25,47 +30,51 @@ public:
         vector<int> ans;
         unordered_set<TreeNode*> vis;
         queue<TreeNode*> q;
-        q.push(target);  // Fixed: Added semicolon
+        q.push(target);  
         vis.insert(target);
         int lvl = 0;
 
-        while (!q.empty()) {
+        while (!q.empty()) 
+        {
             int n = q.size();
-            bool isTargetLevel = (lvl == k);
+            
 
-            for (int i = 0; i < n; ++i) {
+            for (int i = 0; i < n; ++i) 
+            {
                 TreeNode* node = q.front();
                 q.pop();
 
-                if (isTargetLevel) {
+                if (lvl==k) 
+                {
                     ans.push_back(node->val);
                     continue;
                 }
 
-                // Check left child
-                if (node->left && vis.find(node->left) == vis.end()) {  // Fixed: vis.end -> vis.end()
+                if (node->left && vis.find(node->left) == vis.end()) 
+                {  
                     vis.insert(node->left);
                     q.push(node->left);
                 }
 
-                // Check right child
-                if (node->right && vis.find(node->right) == vis.end()) {  // Fixed: vis.end -> vis.end()
+                if (node->right && vis.find(node->right) == vis.end()) 
+                {  
                     vis.insert(node->right);
                     q.push(node->right);
                 }
 
-                // Check parent
-                if (mp.find(node) != mp.end()) {  // Fixed: mp.found -> mp.find()
+                if (mp.find(node) != mp.end()) 
+                { 
                     TreeNode* parent = mp[node];
-                    if (vis.find(parent) == vis.end()) {
+                    if (vis.find(parent) == vis.end()) 
+                    {
                         vis.insert(parent);
                         q.push(parent);
                     }
                 }
             }
 
-            if (isTargetLevel) break;
-            lvl++;  // Critical fix: Increment level after processing each level
+            if (lvl==k) break;
+            lvl++;  
         }
 
         return ans;
