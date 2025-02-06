@@ -2,9 +2,10 @@ class Solution {
 public:
     string minWindow(string s, string t) 
     {
+        if(t.size()>s.size()) return "";
+        int sidx=-1;
         int r=0;
         int l=0;
-        int sidx=-1;
         int cnt=0;
         int ans=INT_MAX;
         int hash[256]={0};
@@ -12,7 +13,6 @@ public:
         {
             hash[c]++;
         }
-
         while(r<s.size())
         {
             if(hash[s[r]]>0)
@@ -36,10 +36,7 @@ public:
                 l++;
             }
         }
-        if(sidx==-1)
-        {
-            return "";
-        }
+        if(sidx==-1) return "";
         return s.substr(sidx,ans);
     }
 };
