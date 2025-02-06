@@ -11,24 +11,36 @@
  */
 class Solution {
 public:
-    int maxi=INT_MIN;
-
-
-    int Func(TreeNode*root)
-    {
-        if(root==nullptr) return 0;
-        int L=max(0,Func(root->left));
-        int R=max(0,Func(root->right));
-        maxi=max(maxi,L+root->val+R);
-
-        return max(L,R)+root->val;
+    int maxSum(TreeNode* root, int& ans) {
+    /* This function return the Branch Sum......
+    So if the node is NULL then it won't have a branch....so the branch sum will be 0.
+    */
+    //Base Case
+    if(root == NULL){
+        return 0;
     }
+    
+    //Recursive Case 
+    //BS = Branch Sum
+    int leftBS = root->val + maxSum( root->left , ans );
+    int rightBS = root->val + maxSum( root->right , ans );
+    
+    ans = max({
+                ans,            //we may have found the maximum ans already
+                root->val,      //may be the current root val is the maximum sum possible
+                leftBS,         //may be the answer contain root->val + left branch value
+                rightBS,        //may be the answer contain root->val + right branch value
+                leftBS + rightBS - root->val   // may be ans conatin left branch + right branch + root->val
+                                               // Since the root val is added twice from leftBS and rightBS so we are sunstracting it.
+            });
+    
+    //Return the max branch Sum
+    return max({ leftBS , rightBS , root->val });
+}
 
-
-    int maxPathSum(TreeNode* root) 
-    {
-        if(root==nullptr) return 0;
-        Func(root);
-        return maxi;
-    }
+int maxPathSum(TreeNode* root) {
+    int ans = INT_MIN;
+    maxSum(root, ans);
+    return ans;
+}
 };
