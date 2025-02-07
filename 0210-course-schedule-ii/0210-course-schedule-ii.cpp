@@ -1,56 +1,62 @@
 class Solution {
 public:
+    bool dfs(int node, vector<int>& vis, vector<vector<int>>& adj, stack<int>& st) 
+    {
+        vis[node] = 1; // Mark node as "visiting"
+
+        for (auto c : adj[node]) 
+        {
+            if (vis[c] == 0)  // If not visited, do DFS
+            {
+                if (dfs(c, vis, adj, st)) 
+                {
+                    return true; // Cycle detected
+                }
+            }
+            else if (vis[c] == 1) // Back edge found, cycle detected
+            {
+                return true;
+            }
+        }
+
+        vis[node] = 2; // ✅ Mark node as "fully processed"
+        st.push(node); // Push to stack for topological order
+        return false;
+    }
+
     vector<int> findOrder(int num, vector<vector<int>>& pre) 
     {
         vector<int> ans;
         vector<vector<int>> adj(num);
-        for (int i = 0; i < pre.size(); i++) 
+        
+        // Build adjacency list
+        for (auto& p : pre) 
         {
-            int v = pre[i][0];
-            int u = pre[i][1];
-
+            int v = p[0], u = p[1];
             adj[u].push_back(v);
         }
 
         vector<int> vis(num, 0);
-        vector<int>indegree(num,0);
-
-        for(int i=0;i<num;i++)
+        stack<int> st;
+        
+        // Perform DFS on each unvisited node
+        for (int i = 0; i < num; i++) 
         {
-            for(auto c:adj[i])
+            if (vis[i] == 0) 
             {
-                indegree[c]++;
-            }
-        }
-        queue<int>q;
-        for(int i=0;i<num;i++)
-        {
-            if(indegree[i]==0)
-            {
-                q.push(i);
-            }
-        }
-
-        while(!q.empty())
-        {
-            int node=q.front();
-            q.pop();
-            ans.push_back(node);
-
-            for(auto c:adj[node])
-            {
-                indegree[c]--;
-                if(indegree[c]==0)
+                if (dfs(i, vis, adj, st)) // If cycle detected, return empty list
                 {
-                    q.push(c);
+                    return {};
                 }
             }
         }
 
-        for(int i=0;i<indegree.size();i++)
+        while (!st.empty()) 
         {
-            if(indegree[i]>0) return{};
+            ans.push_back(st.top());
+            st.pop();
         }
+
         return ans;
     }
 };
