@@ -4,20 +4,29 @@ public:
     {
         int ans=0;
         int l=0;
+        int mini=INT_MIN;
         int r=height.size()-1;
         while(l<r)
         {
             if(height[l]>height[r])
             {
-                int water=height[r]*(r-l);
+                if(height[r]>mini)
+                {
+                    int water=height[r]*(r-l);
+                    ans=max(water,ans);
+                    mini=height[r];
+                }
                 r--;
-                ans=max(water,ans);
             }
             else
             {
-                int water=height[l]*(r-l);
+                if(height[l]>mini)
+                {
+                    int water=height[l]*(r-l);
+                    ans=max(water,ans);
+                    mini=height[l];
+                }
                 l++;
-                ans=max(water,ans);
             }
         }
         return ans;
