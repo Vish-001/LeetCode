@@ -1,44 +1,46 @@
 class Solution {
 public:
-    static bool comp(const pair<string, vector<string>>& a, const pair<string, vector<string>>& b) {
+    static bool comp(const pair<string, string>& a, const pair<string, string>& b) {
         if (a.second == b.second)  // If contents are the same, sort by identifier
-            return a.first < b.first;  
+            return a.first < b.first;
         return a.second < b.second;  // Otherwise, sort by content
     }
 
     vector<string> reorderLogFiles(vector<string>& logs) {
-        vector<pair<string, vector<string>>> vec1;  // Letter logs
-        vector<string> vec2;  // Digit logs (stored as strings)
-        
+        vector<pair<string, string>> letterLogs;  // Stores {identifier, content}
+        vector<string> digitLogs;  // Stores digit logs as-is
+
         for (int i = 0; i < logs.size(); i++) {
-            stringstream ss(logs[i]);
-            string idf, word;
-            ss >> idf;  // Extract identifier
-            vector<string> content;
-            while (ss >> word) content.push_back(word);
-            
-            if (isdigit(content[0][0]))  // If first word is a digit, it's a digit log
-                vec2.push_back(logs[i]);
-            else
-                vec1.push_back({idf, content});
-        }
+            stringstream ss(logs[i]);  
+            string str;
+            getline(ss, str, ' ');  // Extract identifier
+            string idf = str;
+            string content = "";
+            bool isDigit = false;
 
-        // Sort letter logs using the custom comparator
-        sort(vec1.begin(), vec1.end(), comp);
-
-        // Convert sorted letter logs back to string format
-        vector<string> ans;
-        for (auto& p : vec1) {
-            string s = p.first;
-            for (auto& word : p.second) {
-                s += " " + word;
+            while (getline(ss, str, ' ')) {  
+                if (isdigit(str[0])) isDigit = true;  // If first word is a digit, it's a digit log
+                if (!content.empty()) content += " ";  // Add space between words
+                content += str;
             }
-            ans.push_back(s);
+
+            if (isDigit) {
+                digitLogs.push_back(logs[i]);  
+            } else {
+                letterLogs.push_back({idf, content});
+            }
         }
 
-        // Append digit logs in original order
-        for (auto& log : vec2) {
-            ans.push_back(log);
+        // Sort letter logs using custom comparator
+        sort(letterLogs.begin(), letterLogs.end(), comp);
+
+        // Construct result
+        vector<string> ans;
+        for (int i = 0; i < letterLogs.size(); i++) {
+            ans.push_back(letterLogs[i].first + " " + letterLogs[i].second);
+        }
+        for (int i = 0; i < digitLogs.size(); i++) {
+            ans.push_back(digitLogs[i]);  // Append digit logs at the end
         }
 
         return ans;
