@@ -1,30 +1,27 @@
 class Solution {
 public:
-    vector<vector<int>> dp;  // Memoization table
-
-    int Func(int left, int right, vector<int>& nums) {
-        if (left > right) return 0; // No balloons to burst
-
-        if (dp[left][right] != -1) return dp[left][right];
+    int dp[301][301]; 
+    
+    int Func(vector<int>& nums, int left, int right) 
+    {
+        if (left > right) return 0;
+        
+        if (dp[left][right] != -1) return dp[left][right]; // Return cached result
 
         int maxi = 0;
-        for (int i = left; i <= right; i++) {  
-            int coin = nums[i] * (left > 0 ? nums[left - 1] : 1) * (right < nums.size() - 1 ? nums[right + 1] : 1);
-
-            int remaining = Func(left, i - 1, nums) + Func(i + 1, right, nums);
-            
-            maxi = max(maxi, coin + remaining);
+        for (int i = left; i <= right; i++) {
+            int coins = nums[left - 1] * nums[i] * nums[right + 1] 
+                        + Func(nums, left, i - 1) + Func(nums, i + 1, right);
+            maxi = max(maxi, coins);
         }
 
-        return dp[left][right] = maxi;
+        return dp[left][right] = maxi; // Store result in DP table
     }
 
     int maxCoins(vector<int>& nums) {
-        int n = nums.size();
-        nums.insert(nums.begin(), 1); // Virtual balloon at start
-        nums.push_back(1); // Virtual balloon at end
-
-        dp.assign(n + 2, vector<int>(n + 2, -1)); // Initialize DP table
-        return Func(1, n, nums); // Solve for full range
+        nums.insert(nums.begin(), 1); // Add virtual left boundary
+        nums.push_back(1); // Add virtual right boundary
+        memset(dp, -1, sizeof(dp)); // Initialize DP table
+        return Func(nums, 1, nums.size() - 2); // Call recursive function
     }
 };
