@@ -8,19 +8,17 @@ public:
         {
             if(s[i]==' ') continue;
             int ws=st;
-            while(s[i]!=' ' && i<s.size())
+            while(i<s.size() && s[i]!=' ')
             {
                 s[st]=s[i];
                 st++;
                 i++;
             }
             reverse(s.begin()+ws,s.begin()+st);
-            if(i<s.size())
-            {
-                s[st++]=' ';
-            }
+            s[st]=' ';
+            st++;
         }
-        if(s[s.size()-1]==' ') st--;
+        if(s[st-1]==' ') st--;
         s.resize(st);
         return s;
     }
