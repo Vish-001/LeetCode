@@ -5,57 +5,60 @@ public:
         if(s.size()==1) return s;
         if(s.size()==2)
         {
+            if(s[0]==s[1]) return s;
             string t="";
             t+=s[0];
-            if(s[1]==s[0]) return s;
             return t;
         }
-        int ans=1;
-        string A="";
-        A+=s[0];
-        for(int i=0;i<s.size();i++)
-        {
-            int k=i-1;
-            int j=i+1;
-            while(k>=0 && j<s.size())
-            {
-                if(s[k]==s[j])
-                {
-                    int temp=j-k+1;
-                    if(temp>ans)
-                    {
-                        ans=temp;
-                        A=s.substr(k,temp);
-                    }
-                    k--;
-                    j++;
-                }
-                else
-                {
-                    break;
-                }
-            }
-            k=i;j=i+1;
-            while(k>=0 && j<s.size())
-            {
-                if(s[k]==s[j])
-                {
-                    int temp=j-k+1;
-                    if(temp>ans)
-                    {
-                        ans=temp;
-                        A=s.substr(k,temp);
-                    }
-                    k--;
-                    j++;
-                }
-                else
-                {
-                    break;
-                }
-            }
 
+        int i=0;
+        int sz=1;
+        string ans="";
+        ans+=s[0];
+        while(i<s.size())
+        {
+            int j=i;
+            int k=i+1;
+            while(j>=0 && k<s.size())
+            {
+                int size=0;
+                if(s[j]==s[k])
+                {
+                    int temp=k-j+1;
+                    if(s.substr(j,temp).size()>ans.size())
+                    {
+                        ans=s.substr(j,temp);
+                    }
+                    j--;
+                    k++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            j=i-1;
+            k=i+1;
+            while(j>=0 && k<s.size())
+            {
+                int size=0;
+                if(s[j]==s[k])
+                {
+                    int temp=k-j+1;
+                    if(s.substr(j,temp).size()>ans.size())
+                    {
+                        ans=s.substr(j,temp);
+                    }
+                    j--;
+                    k++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            i++;
         }
-        return A;
+        return ans;
     }
 };
