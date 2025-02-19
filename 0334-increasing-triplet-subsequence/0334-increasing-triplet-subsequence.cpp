@@ -1,24 +1,24 @@
 class Solution {
 public:
-    bool increasingTriplet(vector<int>& nums) {
-        int first = INT_MAX, second = INT_MAX;
-
-        for (int num : nums) 
+    bool increasingTriplet(vector<int>& nums) 
+    {
+        int nums1=INT_MAX;
+        int nums2=INT_MAX;
+        for(auto c:nums)
         {
-            if (num <= first) 
+            if(c<nums1)
             {
-                first = num;
-            } 
-            else if (num <= second) 
+                nums1=c;
+            }
+            else if(c>nums1 && c<nums2)
             {
-                second = num;
-            } 
-            else 
+                nums2=c;
+            }
+            else if(c>nums2)
             {
-                return true;  
+                return true;
             }
         }
-
         return false;
     }
 };
