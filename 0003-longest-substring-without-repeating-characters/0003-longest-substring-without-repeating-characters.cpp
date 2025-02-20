@@ -1,20 +1,22 @@
 class Solution {
 public:
-    int lengthOfLongestSubstring(string s) {
-        vector<int> last(256, -1);  // Last seen positions for each character.
-        int start = 0;             // Start index of current substring.
-        int maxLen = 0;
-        
-        for (int i = 0; i < s.size(); i++) {
-            // If the character has been seen and is in the current window,
-            // move the start to one position after its last occurrence.
-            if (last[s[i]] >= start) {
-                start = last[s[i]] + 1;
+    int lengthOfLongestSubstring(string s) 
+    {
+        int hash[256];
+        memset(hash, -1, sizeof(hash)); // Initialize all elements to -1
+        int ans = 0;
+        int start = 0;
+        for (int i = 0; i < s.size(); i++)
+        {
+            if (hash[s[i]] != -1) 
+            {
+                start = max(start, hash[s[i]] + 1);
             }
-            last[s[i]] = i;
-            maxLen = max(maxLen, i - start + 1);
+            // Update the answer with the current window size
+            ans = max(ans, i - start + 1);
+            // Update the last seen index of the current character
+            hash[s[i]] = i;
         }
-        
-        return maxLen;
+        return ans;
     }
 };
