@@ -1,32 +1,27 @@
 class Solution {
 public:
-    void Func(int i,vector<int>ds,int target,vector<int>& candidates,vector<vector<int>>&ans)
-    {
-        if(i==candidates.size())
-        {
-            if(target==0)
-            {
-                ans.push_back(ds);
-            }
+    void Func(int i, int target, vector<int>& ds, vector<int>& cd, vector<vector<int>>& ans) {
+        if (target == 0) {
+            ans.push_back(ds);
             return;
         }
-        if (target < 0 || i >= candidates.size()) {
+        if (target < 0 || i >= cd.size()) {
             return;
         }
-        if(target-candidates[i]>=0)
-        {
-            ds.push_back(candidates[i]);
-            Func(i,ds,target-candidates[i],candidates,ans);
-            ds.pop_back();
-        }
-        Func(i+1,ds,target,candidates,ans);
+        
+        // Explore including the current candidate cd[i]
+        ds.push_back(cd[i]);
+        Func(i, target - cd[i], ds, cd, ans);
+        ds.pop_back(); // Backtrack
+        
+        // Explore without including the current candidate cd[i]
+        Func(i + 1, target, ds, cd, ans);
     }
-
-    vector<vector<int>> combinationSum(vector<int>& candidates, int target) 
-    {
-        vector<vector<int>>ans;
-        vector<int>ds;
-        Func(0,ds,target,candidates,ans);
+    
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+        vector<vector<int>> ans;
+        vector<int> ds;
+        Func(0, target, ds, candidates, ans);
         return ans;
     }
 };
