@@ -3,7 +3,7 @@ public:
     int lengthOfLongestSubstring(string s) 
     {
         int hash[256];
-        memset(hash, -1, sizeof(hash)); // Initialize all elements to -1
+        memset(hash, -1, sizeof(hash)); 
         int ans = 0;
         int start = 0;
         for (int i = 0; i < s.size(); i++)
