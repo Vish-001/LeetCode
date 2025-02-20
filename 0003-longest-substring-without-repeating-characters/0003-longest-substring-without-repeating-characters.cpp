@@ -1,19 +1,20 @@
 class Solution {
 public:
-    int lengthOfLongestSubstring(string s) 
-    {
-        unordered_map<char,int>mp;
-        int l=0;
-        int ans=0;
-        for(int r=0;r<s.size();r++)
-        {
-            if(mp.find(s[r])!=mp.end())
-            {
-                l=max(mp[s[r]]+1,l);
+    int lengthOfLongestSubstring(string s) {
+        vector<int> last(256, -1);  // Last seen positions for each character.
+        int start = 0;             // Start index of current substring.
+        int maxLen = 0;
+        
+        for (int i = 0; i < s.size(); i++) {
+            // If the character has been seen and is in the current window,
+            // move the start to one position after its last occurrence.
+            if (last[s[i]] >= start) {
+                start = last[s[i]] + 1;
             }
-            mp[s[r]]=r;
-            ans=max(ans,r-l+1);
+            last[s[i]] = i;
+            maxLen = max(maxLen, i - start + 1);
         }
-        return ans;
+        
+        return maxLen;
     }
 };
