@@ -1,33 +1,45 @@
-bool check(int k, string &s1, string &s2){
-    set<string>s;
-    for(int i = 0; i <= s1.size()-k; ++i){
-        s.insert(s1.substr(i,k));
-    }
-    for(int i = 0; i <= s2.size()-k; ++i){
-        if( s.find(s2.substr(i,k)) != s.end() ) return true;
-    }
-    return false;
-}
-
-
 class Solution {
 public:
-    int findLength(vector<int>& n1 , vector<int>& n2) {
-        string s1,s2;
-        for(int i = 0; i < n1.size(); ++i){
-            s1.push_back(n1[i] + '0');
+    // Check if there exists a substring of length 'size' in s1 that appears in s2.
+    bool Chk(string &s1, string &s2, int size) {
+        // If size is 0, it's trivially true.
+        if(size == 0) return true;
+        // Ensure we don't go out of range.
+        for(int i = 0; i <= s1.size() - size; i++) {
+            string chk = s1.substr(i, size);
+            // string::find returns string::npos if not found.
+            if(s2.find(chk) != string::npos) {
+                return true;
+            }
         }
-        for(int i = 0; i < n2.size(); ++i){
-            s2.push_back(n2[i] + '0');
+        return false;
+    }
+    
+    int findLength(vector<int>& nums1, vector<int>& nums2) {
+        int low = 0;
+        int high = min(nums1.size(), nums2.size());
+        int ans = 0;
+        
+        // Convert the vectors of ints to strings.
+        // We assume that each number is a single digit.
+        string s1, s2;
+        for (auto c : nums1) {
+            s1.push_back(char(c + '0'));
         }
-        int l = -1, r = min(n1.size(),n2.size()) + 1;
-
-        while(r - l > 1){
-            int mid = (l+r)/2;
-            if(check(mid, s1, s2)) l = mid;
-            else r = mid;
+        for (auto c : nums2) {
+            s2.push_back(char(c + '0'));
         }
-
-        return l;
+        
+        // Binary search for the maximum common subarray length.
+        while(low <= high) {
+            int mid = (low + high) / 2;
+            if (Chk(s1, s2, mid)) {
+                ans = mid;        // A common subarray of length mid exists.
+                low = mid + 1;    // Try to find a longer common subarray.
+            } else {
+                high = mid - 1;   // Try a shorter subarray.
+            }
+        }
+        return ans;
     }
 };
