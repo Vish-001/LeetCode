@@ -1,47 +1,50 @@
 class Solution {
 public:
-    int largestRectangleArea(vector<int>& heights) {
-        int ans = 0;
+    void Pse(const vector<int>& heights, vector<int>& PseArr) 
+    {
         stack<int> st;
-
         for (int i = 0; i < heights.size(); i++) 
         {
-            while (!st.empty() && heights[i] < heights[st.top()]) 
+            while (!st.empty() && heights[st.top()] >= heights[i]) 
             {
-                int element = heights[st.top()];
                 st.pop();
-                
-                int area;
-                if (st.empty()) 
-                {
-                    area = i * element;
-                } 
-                else 
-                {
-                    area = element * (i- st.top() - 1);
-                }
-                ans = max(ans, area);
             }
+            PseArr[i] = st.empty() ? -1 : st.top();
             st.push(i);
         }
-
-        while (!st.empty()) 
+    }
+    
+    void Nse(const vector<int>& heights, vector<int>& NseArr) 
+    {
+        stack<int> st;
+        int n = heights.size();
+        for (int i = n - 1; i >= 0; i--) 
         {
-            int element = heights[st.top()];
-            st.pop();
-
-            int area;
-            if (st.empty()) 
+            while (!st.empty() && heights[st.top()] >= heights[i]) 
             {
-                area = heights.size() * element;
-            } 
-            else 
-            {
-                area = element * (heights.size() - st.top() - 1);
+                st.pop();
             }
+            NseArr[i] = st.empty() ? n : st.top();
+            st.push(i);
+        }
+    }
+    
+    int largestRectangleArea(vector<int>& heights) 
+    {
+        int n = heights.size();
+        vector<int> PseArr(n, -1);
+        vector<int> NseArr(n, n);
+        
+        Pse(heights, PseArr);
+        Nse(heights, NseArr);
+        
+        int ans = 0;
+        for (int i = 0; i < n; i++) 
+        {
+            int width = NseArr[i] - PseArr[i] - 1;
+            int area = heights[i] * width;
             ans = max(ans, area);
         }
-
         return ans;
     }
 };
