@@ -1,28 +1,28 @@
-#include <vector>
-#include <set>
-using namespace std;
-
 class Solution {
 public:
     vector<int> maxSlidingWindow(vector<int>& nums, int k) 
     {
-        multiset<int> st; 
-        vector<int> ans;
-
-        for (int i = 0; i < k; i++) 
+        deque<int>dq;
+        vector<int>ans;
+        for(int i=0;i<nums.size();i++)
         {
-            st.insert(nums[i]);
+            while(!dq.empty() && nums[i] > nums[dq.back()])
+            {
+                dq.pop_back();
+            }
+
+            while(!dq.empty() && dq.front() < i-k+1)
+            {
+                dq.pop_front();
+            }
+
+            dq.push_back(i);
+
+            if(i>=k-1)
+            {
+                ans.push_back(nums[dq.front()]);
+            }
         }
-
-        ans.push_back(*st.rbegin());
-
-        for (int i = k; i < nums.size(); i++) 
-        {
-            st.erase(st.find(nums[i - k]));
-            st.insert(nums[i]);
-            ans.push_back(*st.rbegin()); 
-        }
-
         return ans;
     }
 };
