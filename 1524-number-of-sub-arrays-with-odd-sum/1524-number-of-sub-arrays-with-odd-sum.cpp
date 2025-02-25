@@ -7,24 +7,30 @@ class Solution {
 public:
     int numOfSubarrays(vector<int>& arr) 
     {
-        unordered_map<int, int> freq;
-        freq[0] = 1; 
-        int xorSum = 0, count = 0;
         const int MOD = 1e9+7;  
+        int count=0;
 
-        for (int num : arr) 
+        vector<int>Prefix(arr.size(),0);
+        Prefix[0]=arr[0];
+        for(int i=1;i<arr.size();i++)
         {
-            xorSum ^= num;  // XOR update directly on 0/1
+            Prefix[i]=Prefix[i-1]+arr[i];
+        }
+        int odd=0;
+        int even=1;
 
-            // If xorSum is odd, add number of even XORs seen before
-            if (xorSum % 2 == 1) {
-                count = (count + freq[0]) % MOD;
-            } 
-            else {
-                count = (count + freq[1]) % MOD;
+        for(int i=0;i<arr.size();i++)
+        {
+            if(Prefix[i]%2==0)
+            {
+                count=(count+odd)%MOD;
+                even++;
             }
-
-            freq[xorSum % 2]++;
+            else
+            {
+                count=(count+even)%MOD;
+                odd++;
+            }
         }
 
         return count;
