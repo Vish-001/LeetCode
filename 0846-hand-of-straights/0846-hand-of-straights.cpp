@@ -1,26 +1,42 @@
 class Solution {
 public:
-    bool isNStraightHand(vector<int>& hand, int gs) 
+    bool isNStraightHand(vector<int>& hand, int groupSize) 
     {
-        if(hand.size()%gs!=0) return false;
-        map<int,int>mp;
+        if(hand.size()%groupSize!=0) return false;
+
+        unordered_map<int,int>mp;
         for(auto c:hand)
         {
             mp[c]++;
         }
-        while(!mp.empty())
+
+        priority_queue<int>pq;
+        for(auto& c:mp)
         {
-            int curr=mp.begin()->first;
-            for(int i=0;i<gs;i++)
+            pq.push(c.first);
+        }
+
+        while(!pq.empty())
+        {
+            int prev=-1;
+            vector<int>temp;
+            for(int i=0;i<groupSize;i++)
             {
-                if(mp.find(curr+i)==mp.end())
+                if(pq.empty()) return false;
+                int t=pq.top();
+                mp[t]--;
+                temp.push_back(t);
+                cout<<prev<<"  "<<t<<endl;
+                if(prev!=-1 && prev!=t+1) return false;
+                prev=t;
+                pq.pop();
+            }
+
+            for(auto c:temp)
+            {
+                if(mp[c]!=0)
                 {
-                    return false;
-                }
-                mp[curr+i]--;
-                if(mp[curr+i]==0)
-                {
-                    mp.erase(curr+i);
+                    pq.push(c);
                 }
             }
         }
