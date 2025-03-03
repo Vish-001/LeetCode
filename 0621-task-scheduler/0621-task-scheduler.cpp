@@ -7,19 +7,19 @@ public:
         {
             mp[c]++;
         }
+
         priority_queue<int>pq;
 
-        for(auto& p:mp)
+        for(auto &p:mp)
         {
             pq.push(p.second);
         }
 
         int ans=0;
-        
         while(!pq.empty())
         {
             vector<int>temp;
-            int cnt=0;
+            int count=0;
             for(int i=0;i<=n;i++)
             {
                 if(!pq.empty())
@@ -27,8 +27,8 @@ public:
                     int freq=pq.top();
                     pq.pop();
                     freq--;
-                    cnt++;
                     temp.push_back(freq);
+                    count++;
                 }
             }
 
@@ -46,7 +46,7 @@ public:
             }
             else
             {
-                ans+=cnt;
+                ans+=count;
             }
         }
 
