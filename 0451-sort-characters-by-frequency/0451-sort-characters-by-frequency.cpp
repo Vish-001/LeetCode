@@ -1,37 +1,25 @@
 class Solution {
-    static bool comparator(pair<char,int> p1, pair<char,int> p2) 
-    {
-        if(p1.second < p2.second)
-        {
-            return false;
-        }
-        if(p1.second > p2.second)
-        {
-            return true;
-        }
-
-        return p1.first > p2.first;
-    }
 public:
     string frequencySort(string s) 
     {
-        unordered_map<char, int> freq;
-        for (char ch : s) 
-        {
-            freq[ch]++;
-        }
-        vector<pair<char,int>> freqVec;
-        for (auto &entry : freq) 
-        {
-            freqVec.push_back({entry.first, entry.second});
+        unordered_map<char, int> mp;
+        for (char c : s) {
+            mp[c]++;
         }
 
-        sort(freqVec.begin(), freqVec.end(), comparator);
-        string ans;
-        for (auto &entry : freqVec) 
-        {
-            ans.append(entry.second, entry.first);
+        priority_queue<pair<int, char>> pq;
+
+        for (auto& p : mp) {
+            pq.push({p.second, p.first});  // Frequency first, character second
         }
+
+        string ans;
+        while (!pq.empty()) {
+            auto [freq, c] = pq.top();
+            pq.pop();
+            ans.append(freq, c);  // Append 'freq' times
+        }
+
         return ans;
     }
 };
