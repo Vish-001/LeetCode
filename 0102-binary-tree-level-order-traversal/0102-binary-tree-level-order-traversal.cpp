@@ -36,11 +36,11 @@ public:
                 }
                 vec.push_back(temp->val);
             }
-            if(i%2!=0)
-            {
-                reverse(vec.begin(),vec.end());
-            }
-            i++;
+            // if(i%2!=0)
+            // {
+            //     reverse(vec.begin(),vec.end());
+            // }
+            // i++;
             ans.push_back(vec);
         }
         return ans;
