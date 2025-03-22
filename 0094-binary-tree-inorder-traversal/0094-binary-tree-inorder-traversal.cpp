@@ -25,8 +25,8 @@ public:
                 node=node->left;
             }
             node=st.top();
-            ans.push_back(node->val);
             st.pop();
+            ans.push_back(node->val);
             node=node->right;
         }
         return ans;
