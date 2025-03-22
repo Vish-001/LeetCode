@@ -1,23 +1,22 @@
 class Solution {
 public:
-    int HeightSum(TreeNode* temp, int& maxi) {
-        if (temp == nullptr) return 0;
+    int Chk(TreeNode* root, int& maxi) {
+        if (root == nullptr) return 0;
 
-        int Ls = max(0, HeightSum(temp->left, maxi));
-        int Rs = max(0, HeightSum(temp->right, maxi));
+        // Compute maximum path sum for left and right subtrees
+        int L = max(0, Chk(root->left, maxi)); // Ignore negative paths
+        int R = max(0, Chk(root->right, maxi)); // Ignore negative paths
 
-        int currentMax = max({temp->val, Ls + temp->val, Rs + temp->val, Ls + Rs + temp->val});
-        maxi = max(maxi, currentMax);
+        // Update the global maximum path sum
+        maxi = max(maxi, L + R + root->val);
 
-        return max(Ls, Rs) + temp->val;
+        // Return the maximum path sum including the current node as part of the path
+        return root->val + max(L, R);
     }
 
     int maxPathSum(TreeNode* root) {
-        if (!root) return 0; // Edge case: empty tree
-
-        int maxi = INT_MIN;
-        HeightSum(root, maxi); // Fix: This now updates maxi correctly
-
+        int maxi = INT_MIN; 
+        Chk(root, maxi);
         return maxi;
     }
 };
