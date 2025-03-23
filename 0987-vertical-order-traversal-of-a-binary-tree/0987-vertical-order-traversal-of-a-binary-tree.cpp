@@ -1,55 +1,33 @@
-class Solution 
-{
-    public:
-    vector<vector<int>> verticalTraversal(TreeNode* root) 
-    {
+class Solution {
+public:
+    vector<vector<int>> verticalTraversal(TreeNode* root) {
         vector<vector<int>> ans;
-        if(root == nullptr) return ans;
+        if (!root) return ans;
 
-        // Queue stores the node and its coordinates (x, y)
-        queue<pair<TreeNode*, pair<int, int>>> q;
+        map<int, map<int, multiset<int>>> nodes; // x -> (y -> {values})
+        queue<pair<TreeNode*, pair<int, int>>> q; // (node, (x, y))
 
-        // Map stores nodes based on x-coordinate, then y-coordinate, then sorted values
-        map<int, map<int, multiset<int>>> mp;
-
-        // Push root with its position
         q.push({root, {0, 0}});
 
-        while(!q.empty())
-        {
-            int n = q.size();
-            for(int i = 0; i < n; i++)
-            {
-                auto P = q.front();
-                q.pop();
-                TreeNode* node = P.first;
-                int x = P.second.first;  // x-coordinate (vertical position)
-                int y = P.second.second;  // y-coordinate (horizontal position)
-                
-                // Insert node's value into the map
-                mp[y][x].insert(node->val);
+        while (!q.empty()) {
+            auto [node, pos] = q.front();
+            q.pop();
+            int x = pos.first, y = pos.second;
 
-                // Traverse left and right children
-                if(node->left)
-                {
-                    q.push({node->left, {x + 1, y - 1}});
-                }
-                if(node->right)
-                {
-                    q.push({node->right, {x + 1, y + 1}});
-                }
-            }
+            nodes[x][y].insert(node->val);
+
+            if (node->left) q.push({node->left, {x - 1, y + 1}});
+            if (node->right) q.push({node->right, {x + 1, y + 1}});
         }
 
-        // Construct the answer from the map
-        for(auto& p : mp) 
+        for (auto& p : nodes) 
         {
-            vector<int> column;
-            for(auto& q : p.second) 
+            vector<int> col;
+            for (auto& q : p.second) 
             {
-                column.insert(column.end(), q.second.begin(), q.second.end());
+                col.insert(col.end(), q.second.begin(), q.second.end());
             }
-            ans.push_back(column);
+            ans.push_back(col);
         }
 
         return ans;
