@@ -11,25 +11,30 @@
  */
 class Solution {
 public:
-    TreeNode* Build(vector<int>& preorder, int sidx, int eidx, map<int, int>& mp, int& preIndex) {
-        if (sidx > eidx) return nullptr;
-        
-        TreeNode* node = new TreeNode(preorder[preIndex++]);
-        int inorderIdx = mp[node->val];
+    TreeNode*Build(vector<int>&preorder,map<int,int>&mp,int sidx,int eidx,int &i)
+    {
+        if(sidx>eidx || i>=preorder.size())
+        {
+            return nullptr;
+        }
 
-        node->left = Build(preorder, sidx, inorderIdx - 1, mp, preIndex);
-        node->right = Build(preorder, inorderIdx + 1, eidx, mp, preIndex);
+        TreeNode*node=new TreeNode(preorder[i]);
+        int idx=mp[preorder[i]];
+        i++;
+        node->left=Build(preorder,mp,sidx,idx-1,i);
+        node->right=Build(preorder,mp,idx+1,eidx,i);
 
         return node;
     }
 
-    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
-        map<int, int> mp;
-        for (int i = 0; i < inorder.size(); i++) {
-            mp[inorder[i]] = i; // Store indices of inorder elements
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) 
+    {
+        map<int,int>mp;
+        for(int i=0;i<preorder.size();i++)
+        {
+            mp[inorder[i]]=i;
         }
-
-        int preIndex = 0; // Global index for preorder traversal
-        return Build(preorder, 0, inorder.size() - 1, mp, preIndex);
+        int i=0;
+        return Build(preorder,mp,0,preorder.size()-1,i);
     }
 };
